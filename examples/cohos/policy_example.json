@@ -1,0 +1,7 @@
+{
+  "policy_id": "cohos.massgen.m3",
+  "require_massgen_success": true,
+  "orchestrator_timeout_s": 30,
+  "massgen_args": ["--show-schema", "--with-examples"],
+  "forbid_live_keys": false
+}
