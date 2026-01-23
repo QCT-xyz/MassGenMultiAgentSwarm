@@ -211,7 +211,9 @@ IMPORTANT: You are responding to the latest message in an ongoing conversation. 
         if "enforcement_message" in self._template_overrides:
             return str(self._template_overrides["enforcement_message"])
 
-        return "Finish your work above by making a tool call of `vote` or `new_answer`. Make sure you actually call the tool."
+        if getattr(self, 'function_call_enabled', True):
+            return "Finish your work above by making a tool call of `vote` or `new_answer`. Make sure you actually call the tool."
+        return ""
 
     def tool_error_message(self, error_msg: str) -> Dict[str, str]:
         """Create a tool role message for tool usage errors."""

@@ -22,6 +22,7 @@ class Policy:
     massgen_args: Optional[List[str]] = None
     # If true, wrapper refuses if API key env vars are present (prevents accidental live calls).
     forbid_live_keys: bool = False
+    allow_live_keys: bool = False
 
 
 def _load_json(path: str) -> Dict[str, Any]:
@@ -43,6 +44,7 @@ def _parse_policy(policy_obj: Dict[str, Any]) -> Policy:
         raise ValueError("massgen_args must be a list of strings if provided")
 
     forbid_live_keys = bool(policy_obj.get("forbid_live_keys", False))
+    allow_live_keys = bool(policy_obj.get("allow_live_keys", False))
 
     return Policy(
         policy_id=policy_id,
@@ -50,6 +52,7 @@ def _parse_policy(policy_obj: Dict[str, Any]) -> Policy:
         orchestrator_timeout_s=orchestrator_timeout_s,
         massgen_args=massgen_args,
         forbid_live_keys=forbid_live_keys,
+        allow_live_keys=allow_live_keys,
     )
 
 
@@ -75,14 +78,20 @@ def _env_sanitized(policy: Policy) -> Tuple[Dict[str, str], Dict[str, Any]]:
     if policy.forbid_live_keys and present:
         raise RuntimeError(f"Live key env vars present but forbidden by policy: {present}")
 
-    # Strip by default (prevents accidental network calls during tests).
-    for k in secret_vars:
-        base.pop(k, None)
+    stripped = []
+    passed = []
+    if policy.allow_live_keys:
+        passed = present
+    else:
+        # Strip by default (prevents accidental network calls during tests).
+        for k in secret_vars:
+            base.pop(k, None)
+        stripped = present
 
     allowlist_record = ["PATH", "PYTHONPATH", "VIRTUAL_ENV", "CONDA_PREFIX", "HOME", "SHELL"]
     env_record = {k: os.environ.get(k) for k in allowlist_record if os.environ.get(k) is not None}
 
-    return base, {"env_allowlist": env_record, "stripped_secret_vars": present}
+    return base, {"env_allowlist": env_record, "stripped_secret_vars": stripped, "passed_secret_vars": passed}
 
 
 def _invoke_massgen_advisory(

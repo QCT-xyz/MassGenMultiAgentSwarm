@@ -1,0 +1,8 @@
+{
+  "policy_id": "cohos.demo.lmstudio.massgen",
+  "config_path": "examples/cohos/openai_team.yaml",
+  "lmstudio_base_url": "http://127.0.0.1:1234/v1",
+  "lmstudio_api_key": "local",
+  "timeout_s": 360,
+  "orchestrator_timeout_s": 300
+}
