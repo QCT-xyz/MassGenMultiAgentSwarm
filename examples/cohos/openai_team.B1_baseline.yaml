@@ -1,0 +1,41 @@
+agents:
+- id: information_gatherer
+  backend:
+    type: openai
+    model: qwen2.5-coder-7b-instruct-mlx
+    enable_web_search: false
+    enable_code_interpreter: false
+  system_message: "You are an information gathering specialist with access to web\
+    \ search. \nYour role is to find the most current and relevant information on\
+    \ any topic. \nFocus on:\n- Finding authoritative sources\n- Gathering diverse\
+    \ perspectives\n- Identifying recent developments\n- Providing comprehensive coverage\
+    \ of the topic\n"
+- id: domain_expert
+  backend:
+    type: openai
+    model: qwen2.5-coder-7b-instruct-mlx
+    enable_web_search: false
+    enable_code_interpreter: false
+  system_message: "You are a domain expert with analytical capabilities. Your role\
+    \ is to \nprovide deep subject matter expertise and analytical insights. Focus\
+    \ on:\n- Technical accuracy and depth\n- Identifying key concepts and relationships\n\
+    - Providing expert-level analysis\n- Validating information for accuracy\n"
+- id: synthesizer
+  backend:
+    type: openai
+    model: qwen2.5-coder-7b-instruct-mlx
+    enable_web_search: false
+    enable_code_interpreter: false
+  system_message: "You are a synthesis specialist who excels at combining multiple\
+    \ perspectives \ninto coherent, actionable insights. Your role is to:\n- Integrate\
+    \ findings from multiple sources\n- Identify patterns and themes\n- Create clear,\
+    \ structured summaries\n- Highlight practical implications and recommendations\n"
+ui:
+  display_type: rich_terminal
+  logging_enabled: true
+orchestrator:
+  type: round_robin
+  max_rounds: 3
+coordination_config:
+  max_orchestration_restarts: 1
+  invalidate_votes_on_new_answers: false

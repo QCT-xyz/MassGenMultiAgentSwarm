@@ -219,3 +219,9 @@ workspace*/
 sessions/
 .claude/
 CLAUDE.md
+# Local run outputs
+runs/
+# Local venv
+.venv/
+# Local backups
+*.bak

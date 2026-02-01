@@ -1066,8 +1066,15 @@ Your answer:"""
             # Apply all state changes atomically after processing all results
             if reset_signal:
                 # Reset all agents' has_voted to False (any new answer invalidates all votes)
-                for state in self.agent_states.values():
-                    state.has_voted = False
+                invalidate_votes = True
+                try:
+                    invalidate_votes = bool(getattr(self.config.coordination_config, "invalidate_votes_on_new_answers", True))
+                except Exception:
+                    invalidate_votes = True
+
+                if invalidate_votes:
+                    for state in self.agent_states.values():
+                        state.has_voted = False
                 votes.clear()
 
                 for agent_id in self.agent_states.keys():
